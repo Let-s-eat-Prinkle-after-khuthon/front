@@ -2,6 +2,7 @@ import "./App.css";
 import { io } from "socket.io-client";
 import { useEffect, useState } from "react";
 import styled, { keyframes } from "styled-components";
+import Show from "./component/Show";
 <style>
   @import
   url('https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&display=swap');
@@ -12,7 +13,7 @@ function App() {
   const socket = io.connect("http://localhost:3001");
   const [audio, setAudio] = useState(); //소켓에서 데이터 수신
   const animalImage = process.env.PUBLIC_URL + "/animal.png";
-  const [show, setShow] = useState(0);
+
   const [click, setClick] = useState(0);
   const sendMessage = (err) => {
     if (err) {
@@ -24,7 +25,11 @@ function App() {
   };
 
   const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-
+  const musicPlay = () => {
+    audioContext.resume().then(() => {
+      console.log(audioContext.state);
+    });
+  };
   useEffect(() => {
     socket.on("audio", (data) => {
       const binaryData = atob(data);
@@ -43,57 +48,31 @@ function App() {
   }, []);
 
   return (
-    <Body show={show}>
-      <Show click={click}>
-        <Title
-          show={show}
-          onMouseOver={() => {
-            setShow(1);
-            console.log(show);
-          }}
-          onMouseOut={() => {
-            setShow(0);
-            console.log(show);
-          }}
-        >
-          PLAY TOGETHER!
-          <Start
-            show={show}
-            click={click}
+    <Body click={click}>
+      {!click ? (
+        <Show click={click} setClick={setClick} musicPlay={musicPlay} />
+      ) : (
+        <Main click={click}>
+          <button
             onClick={() => {
-              setClick(1);
-              console.log(click);
+              sendMessage();
             }}
           >
-            Let's go!
-          </Start>
-        </Title>
-      </Show>
-
-      <Main click={click}>
-        <button
-          onClick={() => {
-            sendMessage();
-          }}
-        >
-          서버 연결 확인
-        </button>
-        <button
-          onClick={() => {
-            audioContext.resume().then(() => {
-              console.log(audioContext.state);
-            });
-          }}
-        >
-          합주시작
-        </button>
-        <Logo src={animalImage} />
-      </Main>
+            서버 연결 확인
+          </button>
+          <Logo src={animalImage} />
+        </Main>
+      )}
     </Body>
   );
 }
 
 export default App;
+
+const lotation = keyframes`
+100% {
+  transform: rotate(360deg);
+`;
 
 const fade = keyframes`
   from {
@@ -103,16 +82,6 @@ const fade = keyframes`
     opacity:1;
   }
 `;
-
-const bigger = keyframes`
-  from {
-    font-size: 70px;
-  }
-  to{
-    font-size: 500px;
-  }
-`;
-
 const Body = styled.div`
   width: inherit;
   height: inherit;
@@ -120,47 +89,15 @@ const Body = styled.div`
   align-items: center;
   justify-content: center;
   background-color: black;
-
+  ${(props) =>
+    props.click && //primary 가 존재할 경우
+    `
+      background-image: url("https://media.istockphoto.com/id/479280419/ko/%EB%B2%A1%ED%84%B0/%EB%8B%A8%EA%B3%84-%EC%BB%A4%ED%8A%BC.jpg?s=612x612&w=0&k=20&c=x2RiyVJZjwlk26bMKpSHbbugjqhJjf8TZf8Blu8gR5U=");
+      background-size: cover; 
+    `}
   animation: ${fade} 3s;
 
   overflow: hidden;
-`;
-
-const typing = keyframes`
-  from{
-    width: 0
-  }
-`;
-
-const blink = keyframes`
-  50% {
-    border-color: transparent
-  }
-`;
-
-const Title = styled.h1`
-  font-family: "Gaegu", sans-serif;
-  margin-right: 20px;
-  text-align: center;
-  font-size: 70px;
-  color: white;
-  width: 22ch;
-  animation: ${fade} 4s, ${typing} 3s steps(22),
-    ${blink} 0.5s step-end infinite alternate;
-  white-space: nowrap;
-  overflow: hidden;
-  border-right: 3px solid;
-  transition: all 3s;
-  &:hover {
-    transform: translateY(-50px);
-    color: black;
-    animation: ${fade} 3s, ${typing} 3s steps(22);
-  }
-`;
-
-const lotation = keyframes`
-100% {
-  transform: rotate(360deg);
 `;
 
 const Logo = styled.img`
@@ -171,36 +108,7 @@ const Logo = styled.img`
   transform-origin: 50% 50%;
 `;
 
-const Start = styled.button`
-  width: inherit;
-  align-items: center;
-  border: none;
-  background-color: inherit;
-  color: white;
-  font-family: "Gaegu", sans-serif;
-  font-size: 90px;
-  display: ${(props) => (props.show ? "block" : "none")};
-  animation: ${fade} 3s;
-  font-weight: 800;
-  cursor: pointer;
-`;
-
-const Main = styled.div`
-  ${(props) =>
-    !props.click && //primary 가 존재할 경우
-    `
-  display:none;
-  background-color: white;
-`}
-`;
-
-const Show = styled.div`
-  ${(props) =>
-    props.click && //primary 가 존재할 경우
-    `
-display:none;
-`}
-`;
+const Main = styled.div``;
 
 const Box = styled.div`
   border-radius: 40px;
