@@ -3,12 +3,13 @@ import { io } from "socket.io-client";
 import { useEffect, useState } from "react";
 import styled, { keyframes } from "styled-components";
 import Show from "./component/Show";
-<style>
-  @import
-  url('https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&display=swap');
-</style>;
+import { AiFillCaretLeft, AiFillCaretRight, AiFillSound } from "react-icons/ai";
+import { BiSolidMusic, BsMusicNoteBeamed } from "react-icons/bs";
+import { GiMusicalNotes } from "react-icons/gi";
 
 function App() {
+  //연결 확인 부분
+  const socket = io.connect("http://localhost:3001");
   const [instType, setInstType] = useState(); //소켓에서 데이터 수신
   const [sym, setSym] = useState(true);
   const [cats, setCats] = useState(false);
@@ -68,15 +69,28 @@ function App() {
         <Show click={click} setClick={setClick} musicPlay={musicPlay} />
       ) : (
         <Main click={click}>
-          <button
-            onClick={() => {
-              sendMessage();
-            }}
-          >
-            서버 연결 확인
-          </button>
+          <Box>
+            <Tab>
+              PLAY MUSIC
+              <TabButton>
+                <AiFillCaretRight />
+              </TabButton>
+              <TabButton>
+                <AiFillSound />
+              </TabButton>
+              <TabButton>
+                <AiFillCaretLeft />
+              </TabButton>
+            </Tab>
+            <Screen>
+              <StopChi src={process.env.PUBLIC_URL + "/chicken.png"}></StopChi>
+              <StopCat src={process.env.PUBLIC_URL + "/cat.png"}></StopCat>
+              <StopDog src={process.env.PUBLIC_URL + "/dog.png"}></StopDog>
+              <StopDonk src={process.env.PUBLIC_URL + "/donkey.png"}></StopDonk>
+            </Screen>
+          </Box>
           {sym && console.log("sym true")}
-          {cat && <img src="../public/animal.png"></img>}
+          {cats && <img src={process.env.PUBLIC_URL + "/animal.jpg"}></img>}
         </Main>
       )}
     </Body>
@@ -126,8 +140,7 @@ const Body = styled.div`
   ${(props) =>
     props.click && //primary 가 존재할 경우
     `
-      background-image: url("https://mblogthumb-phinf.pstatic.net/MjAxODExMTVfNDYg/MDAxNTQyMjcxNDAzMTYx.jD4LnEJb92PjRsPba-chqZmWBdMti-EMxuMnwubXjHog.e6DikpP8V6YbDty_44L770keXOt56grgG5fF-43bKt4g.PNG.moducampus/%EC%8A%AC%EB%9D%BC%EC%9D%B4%EB%93%9C03.png?type=w800");
-      background-size: cover; 
+      background-color: #18a8f1;
     `}
   animation: ${fade} 2s;
   overflow: hidden;
@@ -135,8 +148,8 @@ const Body = styled.div`
 
 const Logo = styled.img`
   display: block;
-  width: 300px;
-  height: 300px;
+  width: 30px;
+  height: 30px;
   animation: ${lotation} 10s linear infinite;
   transform-origin: 50% 50%;
 `;
@@ -144,4 +157,122 @@ const Logo = styled.img`
 const Main = styled.div`
   animation: ${bright} 3s;
   transition: all 3s;
+`;
+
+const Box = styled.div`
+  background-color: #ffabe4;
+  border: solid 8px #3819a0;
+  min-width: 90vw;
+  min-height: 80vh;
+  overflow: hidden;
+  border-radius: 4px;
+`;
+const Tab = styled.div`
+  background-color: #3819a0;
+  min-width: 85vw;
+  min-height: 8vh;
+  diplay: flex;
+  justify-content: space-between;
+  margin: 1%;
+  color: white;
+  line-height: 46px;
+  align-items: center;
+  overflow: hidden;
+  font-size: 35px;
+  padding-left: 20px;
+  border-radius: 4px;
+`;
+const Screen = styled.div`
+  border: solid 5px #3819a0;
+  background-color: white;
+  min-width: 85vw;
+  min-height: 70vh;
+  border-radius: 4px;
+  margin: 1.5%;
+  display: flex;
+  justify-content: space-evenly;
+`;
+
+const TabButton = styled.div`
+  width: 30px;
+  overflow: hidden;
+  max-height: 5vh;
+  margin: 0.5%;
+  text-align: center;
+  font-weight: 800;
+  color: #3819a0;
+  font-size: 20px;
+  background-color: white;
+  float: right;
+  border-radius: 4px;
+`;
+
+const move = keyframes`
+0% {
+  -webkit-transform: scale(1);
+          transform: scale(1);
+}
+50% {
+  -webkit-transform: scale(1.1);
+          transform: scale(1.1);
+}
+100% {
+  -webkit-transform: scale(1);
+          transform: scale(1);
+}
+}
+@keyframes pulsate-fwd {
+0% {
+  -webkit-transform: scale(1);
+          transform: scale(1);
+}
+50% {
+  -webkit-transform: scale(1.1);
+          transform: scale(1.1);
+}
+100% {
+  -webkit-transform: scale(1);
+          transform: scale(1);
+}
+`;
+
+const Music = styled.button`
+  min-width: 30px;
+  min-height: 30px;
+  background-color: black;
+  &:hover {
+    animation: ${move} 10s linear infinite;
+  }
+`;
+
+const StopCat = styled.img`
+  width: 15vw;
+  height: 35vh;
+  animation: ${move} 1s infinite both;
+  margin: auto;
+  padding-bottom: 20px;
+`;
+const StopChi = styled.img`
+  width: 15vw;
+  height: 35vh;
+  transform: translateY(120px);
+  animation: ${move} 1.3s infinite both;
+  margin: auto;
+  padding-top: 20px;
+`;
+const StopDog = styled.img`
+  width: 15vw;
+  height: 35vh;
+  transform: translate(0px, 40px);
+  animation: ${move} 1.3s infinite both;
+  margin: auto;
+  padding-bottom: 20px;
+`;
+const StopDonk = styled.img`
+  width: 15vw;
+  height: 35vh;
+  transform: translate(0px, 120px);
+  animation: ${move} 1s infinite both;
+  margin: auto;
+  padding-top: 20px;
 `;
