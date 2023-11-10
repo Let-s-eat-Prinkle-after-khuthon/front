@@ -9,7 +9,7 @@ function App() {
     if (err) {
       alert(err);
     } else {
-      socket.emit("message", { message: "hi" });
+      socket.emit("send_message", { message: "hi" });
       console.log("성공");
     }
   };
