@@ -9,13 +9,12 @@ import Show from "./component/Show";
 </style>;
 
 function App() {
-  //연결 확인 부분
-  const socket = io.connect("http://localhost:3001");
-  const [audio, setAudio] = useState(); //소켓에서 데이터 수신
-  const animalImage = process.env.PUBLIC_URL + "/animal.png";
-
-  const [click, setClick] = useState(0);
+  const [instType, setInstType] = useState(); //소켓에서 데이터 수신
+  const [sym, setSym] = useState(true);
+  const [cats, setCats] = useState(false);
+  const [click, setClick] = useState(0); //화면 전환
   const sendMessage = (err) => {
+    //서버 연결 확인
     if (err) {
       alert(err);
     } else {
@@ -47,6 +46,22 @@ function App() {
     });
   }, []);
 
+  socket.on("inst", (data) => {
+    setInstType(data);
+  }); //악기 종류 받아오기
+
+  useEffect(() => {
+    console.log(instType);
+    if (instType == "sym") setSym(true);
+    else if (instType == "cats") setCats(true);
+    return () => {
+      setInstType("");
+      setSym(false);
+      setCats(false);
+    };
+  }, [instType]);
+
+  console.log(sym);
   return (
     <Body click={click}>
       {!click ? (
@@ -60,7 +75,8 @@ function App() {
           >
             서버 연결 확인
           </button>
-          <Logo src={animalImage} />
+          {sym && console.log("sym true")}
+          {cat && <img src="../public/animal.png"></img>}
         </Main>
       )}
     </Body>
@@ -82,6 +98,24 @@ const fade = keyframes`
     opacity:1;
   }
 `;
+const fadeOut = keyframes`
+  from {
+    opacity: 1;
+  }
+  to{
+    opacity:0;
+  }
+`;
+
+const bright = keyframes`
+from{
+  background-color: black;
+}
+to{
+  background-color: white;
+}
+`;
+
 const Body = styled.div`
   width: inherit;
   height: inherit;
@@ -92,11 +126,10 @@ const Body = styled.div`
   ${(props) =>
     props.click && //primary 가 존재할 경우
     `
-      background-image: url("https://media.istockphoto.com/id/479280419/ko/%EB%B2%A1%ED%84%B0/%EB%8B%A8%EA%B3%84-%EC%BB%A4%ED%8A%BC.jpg?s=612x612&w=0&k=20&c=x2RiyVJZjwlk26bMKpSHbbugjqhJjf8TZf8Blu8gR5U=");
+      background-image: url("https://mblogthumb-phinf.pstatic.net/MjAxODExMTVfNDYg/MDAxNTQyMjcxNDAzMTYx.jD4LnEJb92PjRsPba-chqZmWBdMti-EMxuMnwubXjHog.e6DikpP8V6YbDty_44L770keXOt56grgG5fF-43bKt4g.PNG.moducampus/%EC%8A%AC%EB%9D%BC%EC%9D%B4%EB%93%9C03.png?type=w800");
       background-size: cover; 
     `}
-  animation: ${fade} 3s;
-
+  animation: ${fade} 2s;
   overflow: hidden;
 `;
 
@@ -108,15 +141,7 @@ const Logo = styled.img`
   transform-origin: 50% 50%;
 `;
 
-const Main = styled.div``;
-
-const Box = styled.div`
-  border-radius: 40px;
-  width: 70%;
-  height: 80%;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  background-color: rgb(102, 0, 0);
-  animation: ;
+const Main = styled.div`
+  animation: ${bright} 3s;
+  transition: all 3s;
 `;

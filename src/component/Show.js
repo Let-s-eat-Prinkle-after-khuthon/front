@@ -72,7 +72,7 @@ const Title = styled.h1`
   font-size: 70px;
   color: white;
   width: 22ch;
-  animation: ${fade} 4s, ${typing} 3s steps(22),
+  animation: ${fade} 2s, ${typing} 3s steps(22),
     ${blink} 0.5s step-end infinite alternate;
   white-space: nowrap;
   overflow: hidden;
@@ -81,7 +81,7 @@ const Title = styled.h1`
   &:hover {
     transform: translateY(-50px);
     color: black;
-    animation: ${fade} 3s, ${typing} 3s steps(22);
+    animation: ${fade} 2s, ${typing} 3s steps(22);
   }
 `;
 
