@@ -1,4 +1,5 @@
 import "./App.css";
+import React from "react";
 import { io } from "socket.io-client";
 import { useEffect, useState } from "react";
 import styled, { keyframes } from "styled-components";
@@ -89,15 +90,13 @@ function App() {
               <StopDonk src={process.env.PUBLIC_URL + "/donkey.png"}></StopDonk>
             </Screen>
           </Box>
-          {sym && console.log("sym true")}
-          {cats && <img src={process.env.PUBLIC_URL + "/animal.jpg"}></img>}
         </Main>
       )}
     </Body>
   );
 }
 
-export default App;
+export default React.memo(App);
 
 const lotation = keyframes`
 100% {
